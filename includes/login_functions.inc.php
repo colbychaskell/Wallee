@@ -20,19 +20,25 @@ function check_login($dbc, $email = '', $pass = '') {
     if(empty($pass)) {
         $errors[] = 'You forgot to enter your password.';
     } else {
-        $p = mysqli_real_escape_string($dbc, trim($pass));
+        $p = trim($pass);
     }
 
     if(empty($errors)) {
-        $q = "SELECT user_id, first_name FROM users WHERE email='$e' AND pass=SHA2('$p', 512)";
+        $q = "SELECT user_id, first_name, pass FROM users WHERE email='$e'";
         $r = @mysqli_query($dbc, $q);
 
         if(mysqli_num_rows($r) == 1) {
             $row = mysqli_fetch_array($r, MYSQLI_ASSOC);
 
-            return [true, $row];
+            if(password_verify($p, $row['pass'])) {
+                unset($row['pass']);
+                return [true, $row];
+            } else {
+                $errors[] = 'The email address and password do not match.';
+            }
+            
         } else {
-            $errors[] = 'The email address or password are incorrect.';
+            $errors[] = 'The email address and password do not match.';
         }
     }
     return [false, $errors];

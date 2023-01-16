@@ -1,17 +1,20 @@
 <?php
-if(!isset($_COOKIE['user_id'])) {
+
+session_start();
+
+if(!isset($_SESSION['user_id'])) {
     require('includes/login_functions.php');
     redirect_user();
 } else {
-    setcookie('user_id', '', time()-3600, '/', '', 0, 0);
-    setcookie('first_name', '', time()-3600, '/', '', 0, 0);
-
+    $_SESSION = [];
+    session_destroy();
+    setcookies('PHPSESSID', '', time()-3600, '/', '', 0, 0);
 }
 
 $page_title = 'Logged Out!';
 include('includes/header.html');
 echo "<h1>Logged Out!</h1>
-<p>You are now logged out, {$_COOKIE['first_name']}!</p>";
+<p>You are now logged out!</p>";
 include('includes/footer.html');
 
 ?>

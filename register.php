@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($_POST['pass1'] != $_POST['pass2']) {
 			$errors[] = 'Your passwords did not match.';
 		} else {
-			$p = mysqli_real_escape_string($dbc, trim($_POST['pass1']));
+			$p = password_hash(trim($_POST['pass1']), PASSWORD_DEFAULT);
 		}
 	} else {
 		$errors[] = 'You forgot to enter your password.';
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (empty($errors)) { // If everything's OK.
 
 		// Make the query:
-		$q = "INSERT INTO users (first_name, last_name, email, pass, registration_date) VALUES ('$fn', '$ln', '$e', SHA2('$p', 512), NOW() )";
+		$q = "INSERT INTO users (first_name, last_name, email, pass, registration_date) VALUES ('$fn', '$ln', '$e', '$p', NOW() )";
 		$r = @mysqli_query($dbc, $q); // Run the query.
 		if ($r) { // If it ran OK.
 
